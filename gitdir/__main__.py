@@ -36,7 +36,7 @@ if __name__ == '__main__':
     if arguments['clone']:
         for repo_spec in arguments['<repo_spec>']:
             gitdir.host.by_name(arguments['<host>']).clone(repo_spec)
-    if arguments['update']:
+    elif arguments['update']:
         if arguments['<host>']:
             gitdir.host.by_name(arguments['<host>']).update()
         else:
