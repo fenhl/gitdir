@@ -4,6 +4,7 @@
 
 Usage:
   gitdir clone <host> <repo_spec>...
+  gitdir update
   gitdir -h | --help
   gitdir --version
 
@@ -35,5 +36,8 @@ if __name__ == '__main__':
     if arguments['clone']:
         for repo_spec in arguments['<repo_spec>']:
             gitdir.host.by_name(arguments['<host>']).clone(repo_spec)
+    if arguments['update']:
+        for host in gitdir.host.all():
+            host.update()
     else:
         raise NotImplementedError('unknown subcommand')
