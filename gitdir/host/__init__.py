@@ -1,4 +1,5 @@
 import abc
+import subprocess
 
 import gitdir
 
