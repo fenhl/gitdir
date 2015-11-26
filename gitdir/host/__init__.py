@@ -21,6 +21,7 @@ class Host(abc.ABC):
 
     def update(self):
         for repo_dir in self:
+            print('[ ** ] updating {}'.format(repo_dir))
             subprocess.check_call(['git', 'pull'], cwd=str(repo_dir / 'master'))
 
 def all():
