@@ -30,11 +30,14 @@ def all():
             yield by_name(host_dir.name)
 
 def by_name(hostname):
-    if hostname == 'fenhl.net':
-        import gitdir.host.fenhl
-        return gitdir.host.fenhl.Fenhl()
-    elif hostname == 'github.com':
+    if hostname == 'github.com':
         import gitdir.host.github
         return gitdir.host.github.GitHub()
+    elif hostname == 'localhost':
+        import gitdir.host.localhost
+        return gitdir.host.localhost.LocalHost()
+    elif hostname == 'fenhl.net':
+        import gitdir.host.fenhl
+        return gitdir.host.fenhl.Fenhl()
     else:
         raise ValueError('Unsupported hostname: {}'.format(hostname))
