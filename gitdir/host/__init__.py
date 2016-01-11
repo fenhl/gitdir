@@ -26,7 +26,7 @@ class Host(abc.ABC):
 
 def all():
     for host_dir in gitdir.GITDIR.iterdir():
-        if not host_dir.name.startswith('.'): # ignore dotfiles
+        if not host_dir.is_symlink() and not host_dir.name.startswith('.'): # ignore symlinks and dotfiles
             yield by_name(host_dir.name)
 
 def by_name(hostname):
