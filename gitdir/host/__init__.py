@@ -15,6 +15,10 @@ class Host(abc.ABC):
     def clone(self, repo_spec):
         raise NotImplementedError('Host {} does not support cloning'.format(self))
 
+    @abc.abstractmethod
+    def deploy(self, repo_spec, branch='master', request_time=None):
+        raise NotImplementedError('Host {} does not support deploying'.format(self))
+
     @property
     def dir(self):
         return gitdir.GITDIR / str(self)

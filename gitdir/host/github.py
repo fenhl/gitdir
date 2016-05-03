@@ -1,4 +1,3 @@
-import pathlib
 import subprocess
 
 import gitdir
@@ -21,3 +20,12 @@ class GitHub(gitdir.host.Host):
             raise NotImplementedError('repo already exists') #TODO
         else:
             subprocess.check_call(['git', 'clone', 'https://github.com/{}/{}.git'.format(user, repo_name), 'master'], cwd=str(repo_dir))
+
+    def deploy(self, repo_spec, branch='master'):
+        user, repo_name = repo_spec.split('/')
+        if branch == 'master' or branch is None:
+            cwd = self.dir / user / repo_name / 'master'
+        else:
+            cwd = self.dir / user / repo_name / 'branch' / branch
+        subprocess.check_call(['git', 'fetch', 'origin'], cwd=str(cwd))
+        subprocess.check_call(['git', 'reset', '--hard', 'origin/{}'.format(branch or 'master')], cwd=str(cwd)) #TODO don't reset gitignored files (or try merging and reset only if that fails)
