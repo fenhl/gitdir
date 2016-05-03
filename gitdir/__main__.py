@@ -38,7 +38,7 @@ if __name__ == '__main__':
         for repo_spec in arguments['<repo_spec>']:
             gitdir.host.by_name(arguments['<host>']).clone(repo_spec)
     elif arguments['deploy']:
-        gitdir.host.by_name(arguments['<host>']).deploy(arguments['<repo_spec>'], branch=arguments['<branch>'])
+        gitdir.host.by_name(arguments['<host>']).deploy(arguments['<repo_spec>'][0], branch=arguments['<branch>'])
     elif arguments['update']:
         if arguments['<host>']:
             gitdir.host.by_name(arguments['<host>']).update()
