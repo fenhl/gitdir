@@ -4,6 +4,7 @@
 
 Usage:
   gitdir clone <host> <repo_spec>...
+  gitdir deploy <host> <repo_spec> [<branch>]
   gitdir update [<host>]
   gitdir -h | --help
   gitdir --version
@@ -36,6 +37,8 @@ if __name__ == '__main__':
     if arguments['clone']:
         for repo_spec in arguments['<repo_spec>']:
             gitdir.host.by_name(arguments['<host>']).clone(repo_spec)
+    elif arguments['deploy']:
+        gitdir.host.by_name(arguments['<host>']).deploy(repo_spec, branch=arguments['<branch>'])
     elif arguments['update']:
         if arguments['<host>']:
             gitdir.host.by_name(arguments['<host>']).update()
