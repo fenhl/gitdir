@@ -1,3 +1,5 @@
+import sys
+
 import abc
 import subprocess
 
@@ -23,10 +25,16 @@ class Host(abc.ABC):
     def dir(self):
         return gitdir.GITDIR / str(self)
 
-    def update(self):
+    def update(self, quiet=False):
         for repo_dir in self:
-            print('[ ** ] updating {}'.format(repo_dir))
-            subprocess.check_call(['git', 'pull'], cwd=str(repo_dir / 'master'))
+            if quiet:
+                out = subprocess.check_output(['git', 'pull'], cwd=str(repo_dir / 'master'))
+                if out != b'Already up-to-date.\n':
+                    print('[ ** ] updating {}'.format(repo_dir))
+                    sys.stdout.buffer.write(out)
+            else:
+                print('[ ** ] updating {}'.format(repo_dir))
+                subprocess.check_call(['git', 'pull'], cwd=str(repo_dir / 'master'))
 
 def all():
     for host_dir in gitdir.GITDIR.iterdir():

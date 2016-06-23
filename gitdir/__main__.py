@@ -5,13 +5,14 @@
 Usage:
   gitdir clone <host> <repo_spec>...
   gitdir deploy <host> <repo_spec> [<branch>]
-  gitdir update [<host>]
+  gitdir [options] update [<host>]
   gitdir -h | --help
   gitdir --version
 
 Options:
-  -h, --help  Print this message and exit.
-  --version   Print version info and exit.
+  -h, --help   Print this message and exit.
+  -q, --quiet  Only produce output for repos that have been changed.
+  --version    Print version info and exit.
 """
 
 import sys
@@ -45,7 +46,7 @@ if __name__ == '__main__':
         gitdir.host.by_name(arguments['<host>']).deploy(arguments['<repo_spec>'][0], branch=arguments['<branch>'])
     elif arguments['update']:
         if arguments['<host>']:
-            gitdir.host.by_name(arguments['<host>']).update()
+            gitdir.host.by_name(arguments['<host>']).update(quiet=arguments['--quiet'])
         else:
             for host in gitdir.host.all():
                 host.update()
