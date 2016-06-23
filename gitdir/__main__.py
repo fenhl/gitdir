@@ -14,6 +14,10 @@ Options:
   --version   Print version info and exit.
 """
 
+import sys
+
+sys.path.append('/opt/py')
+
 import docopt
 import pathlib
 import subprocess
