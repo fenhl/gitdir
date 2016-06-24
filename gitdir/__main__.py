@@ -49,6 +49,6 @@ if __name__ == '__main__':
             gitdir.host.by_name(arguments['<host>']).update(quiet=arguments['--quiet'])
         else:
             for host in gitdir.host.all():
-                host.update()
+                host.update(quiet=arguments['--quiet'])
     else:
         raise NotImplementedError('unknown subcommand')
