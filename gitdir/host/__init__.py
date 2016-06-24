@@ -30,8 +30,8 @@ class Host(abc.ABC):
             if quiet:
                 out = subprocess.check_output(['git', 'pull'], cwd=str(repo_dir / 'master'))
                 if out != b'Already up-to-date.\n':
-                    print('[ ** ] updating {}'.format(repo_dir))
                     sys.stdout.buffer.write(out)
+                    print('[ ** ] updated {}'.format(repo_dir))
             else:
                 print('[ ** ] updating {}'.format(repo_dir))
                 subprocess.check_call(['git', 'pull'], cwd=str(repo_dir / 'master'))
