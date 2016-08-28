@@ -5,8 +5,8 @@ import gitdir.host
 
 class GitHub(gitdir.host.Host):
     def __iter__(self):
-        for user_dir in self.dir.iterdir():
-            yield from user_dir.iterdir()
+        for user_dir in sorted(self.dir.iterdir()):
+            yield from sorted(user_dir.iterdir())
 
     def __str__(self):
         return 'github.com'

@@ -6,7 +6,7 @@ import gitdir.host
 
 class LocalHost(gitdir.host.Host):
     def __iter__(self):
-        yield from self.dir.iterdir()
+        yield from sorted(self.dir.iterdir())
 
     def __str__(self):
         return 'localhost'
