@@ -52,5 +52,8 @@ def by_name(hostname):
     elif hostname == 'fenhl.net':
         import gitdir.host.fenhl
         return gitdir.host.fenhl.Fenhl()
+    elif hostname == 'gerrit.wikimedia.org':
+        import gitdir.host.wikimedia
+        return gitdir.host.wikimedia.Wikimedia()
     else:
         raise ValueError('Unsupported hostname: {}'.format(hostname))
