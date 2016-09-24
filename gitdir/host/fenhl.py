@@ -1,7 +1,5 @@
-import pathlib
 import subprocess
 
-import gitdir
 import gitdir.host
 
 class Fenhl(gitdir.host.Host):
