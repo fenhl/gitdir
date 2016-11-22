@@ -16,7 +16,7 @@ class GitHub(gitdir.host.Host):
         if not repo_dir.exists():
             repo_dir.mkdir(parents=True)
         if (repo_dir / 'master').exists():
-            raise NotImplementedError('repo already exists') #TODO
+            self.deploy(repo_spec)
         else:
             subprocess.check_call(['git', 'clone', 'https://github.com/{}/{}.git'.format(user, repo_name), 'master'], cwd=str(repo_dir))
 

@@ -15,7 +15,7 @@ class Wikimedia(gitdir.host.Host):
         if not repo_dir.exists():
             repo_dir.mkdir(parents=True)
         if (repo_dir / 'master').exists():
-            raise NotImplementedError('repo already exists') #TODO
+            self.deploy(repo_spec)
         else:
             subprocess.check_call(['git', 'clone', 'https://gerrit.wikimedia.org/r/p/mediawiki/extensions/{repo_name}.git'.format(repo_name=repo_name), 'master'], cwd=str(repo_dir))
 
