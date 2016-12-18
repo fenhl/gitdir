@@ -17,6 +17,9 @@ class Host(abc.ABC):
     def clone(self, repo_spec):
         raise NotImplementedError('Host {} does not support cloning'.format(self))
 
+    def clone_stage(self, repo_spec):
+        raise NotImplementedError('Host {} does not support cloning stages'.format(self))
+
     @abc.abstractmethod
     def deploy(self, repo_spec, branch='master', request_time=None):
         raise NotImplementedError('Host {} does not support deploying'.format(self))

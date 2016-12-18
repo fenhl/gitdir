@@ -19,6 +19,16 @@ class Fenhl(gitdir.host.Host):
         else:
             subprocess.check_call(['git', 'clone', 'fenhl@fenhl.net:/opt/git/localhost/{repo_name}/{repo_name}.git'.format(repo_name=repo_name), 'master'], cwd=str(repo_dir))
 
+    def clone_stage(self, repo_spec):
+        repo_name = repo_spec
+        repo_dir = self.dir / repo_name
+        if not repo_dir.exists():
+            repo_dir.mkdir(parents=True)
+        if (repo_dir / 'stage').exists():
+            raise NotImplementedError('Stage already exists')
+        else:
+            subprocess.check_call(['git', 'clone', 'fenhl@fenhl.net:/opt/git/localhost/{repo_name}/{repo_name}.git'.format(repo_name=repo_name), 'stage'], cwd=str(repo_dir))
+
     def deploy(self, repo_spec, branch='master'):
         repo_name = repo_spec
         if branch == 'master' or branch is None:

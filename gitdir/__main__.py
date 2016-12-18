@@ -4,6 +4,7 @@
 
 Usage:
   gitdir clone <host> <repo_spec>...
+  gitdir clone-stage <host> <repo_spec>...
   gitdir deploy <host> <repo_spec> [<branch>]
   gitdir [options] update [<host>]
   gitdir -h | --help
@@ -42,6 +43,9 @@ if __name__ == '__main__':
     if arguments['clone']:
         for repo_spec in arguments['<repo_spec>']:
             gitdir.host.by_name(arguments['<host>']).clone(repo_spec)
+    elif arguments['clone-stage']:
+        for repo_spec in arguments['<repo_spec>']:
+            gitdir.host.by_name(arguments['<host>']).clone_stage(repo_spec)
     elif arguments['deploy']:
         gitdir.host.by_name(arguments['<host>']).deploy(arguments['<repo_spec>'][0], branch=arguments['<branch>'])
     elif arguments['update']:
