@@ -41,7 +41,7 @@ class Host(abc.ABC):
                 subprocess.check_call(['git', 'pull'], cwd=str(repo_dir / 'master'))
 
 def all():
-    for host_dir in gitdir.GITDIR.iterdir():
+    for host_dir in sorted(gitdir.GITDIR.iterdir()):
         if not host_dir.is_symlink() and not host_dir.name.startswith('.'): # ignore symlinks and dotfiles
             yield by_name(host_dir.name)
 
