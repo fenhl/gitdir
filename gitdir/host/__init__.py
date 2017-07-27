@@ -30,15 +30,19 @@ class Host(abc.ABC):
 
     def update(self, quiet=False):
         for repo_dir in self:
-            if quiet:
-                out = subprocess.check_output(['git', 'pull', '--quiet'], cwd=str(repo_dir / 'master'))
-                if out != b'':
-                    sys.stdout.buffer.write(out)
-                    sys.stdout.buffer.flush()
-                    print('[ ** ] updated {}'.format(repo_dir))
-            else:
-                print('[ ** ] updating {}'.format(repo_dir))
-                subprocess.check_call(['git', 'pull'], cwd=str(repo_dir / 'master'))
+            try:
+                if quiet:
+                    out = subprocess.check_output(['git', 'pull', '--quiet'], cwd=str(repo_dir / 'master'))
+                    if out != b'':
+                        sys.stdout.buffer.write(out)
+                        sys.stdout.buffer.flush()
+                        print('[ ** ] updated {}'.format(repo_dir))
+                else:
+                    print('[ ** ] updating {}'.format(repo_dir))
+                    subprocess.check_call(['git', 'pull'], cwd=str(repo_dir / 'master'))
+            except subprocess.CalledProcessError:
+                print('[ !! ] failed to update {}'.format(repo_dir), file=sys.stderr)
+                raise
 
 def all():
     for host_dir in sorted(gitdir.GITDIR.iterdir()):
