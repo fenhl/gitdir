@@ -6,6 +6,8 @@ Usage:
   gitdir clone <host> <repo_spec>...
   gitdir clone-stage <host> <repo_spec>...
   gitdir deploy <host> <repo_spec> [<branch>]
+  gitdir path <host> <repo_spec> [<branch>]
+  gitdir path-stage <host> <repo_spec>
   gitdir [options] update [<host>]
   gitdir -h | --help
   gitdir --version
@@ -48,6 +50,10 @@ if __name__ == '__main__':
             gitdir.host.by_name(arguments['<host>']).clone_stage(repo_spec)
     elif arguments['deploy']:
         gitdir.host.by_name(arguments['<host>']).deploy(arguments['<repo_spec>'][0], branch=arguments['<branch>'])
+    elif arguments['path']:
+        print(gitdir.host.by_name(arguments['<host>']).repo(arguments['<repo_spec>'][0]).branch_path(arguments['<branch>']))
+    elif arguments['path-stage']:
+        print(gitdir.host.by_name(arguments['<host>']).repo(arguments['<repo_spec>'][0]).stage_path)
     elif arguments['update']:
         if arguments['<host>']:
             gitdir.host.by_name(arguments['<host>']).update(quiet=arguments['--quiet'])

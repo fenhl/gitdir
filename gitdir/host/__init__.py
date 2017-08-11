@@ -5,6 +5,24 @@ import subprocess
 
 import gitdir
 
+class Repo:
+    def __init__(self, host, repo_spec):
+        self.host = host
+        self.spec = repo_spec
+
+    def branch_path(self, branch=None):
+        if branch is None:
+            return self.path / 'master'
+        return self.path / 'branch' / branch
+
+    @property
+    def path(self):
+        return self.host.repo_path(self.spec)
+
+    @property
+    def stage_path(self):
+        return self.path / 'stage'
+
 class Host(abc.ABC):
     @abc.abstractmethod
     def __iter__(self):
@@ -15,18 +33,44 @@ class Host(abc.ABC):
         raise NotImplementedError()
 
     def clone(self, repo_spec):
-        raise NotImplementedError('Host {} does not support cloning'.format(self))
+        repo_dir = self.repo_path(repo_spec)
+        if not repo_dir.exists():
+            repo_dir.mkdir(parents=True)
+        if (repo_dir / 'master').exists():
+            self.deploy(repo_spec)
+        else:
+            subprocess.check_call(['git', 'clone', self.repo_remote(repo_spec), 'master'], cwd=str(repo_dir))
 
     def clone_stage(self, repo_spec):
-        raise NotImplementedError('Host {} does not support cloning stages'.format(self))
+        repo_dir = self.repo_path(repo_spec)
+        if not repo_dir.exists():
+            repo_dir.mkdir(parents=True)
+        if (repo_dir / 'stage').exists():
+            raise NotImplementedError('Stage already exists')
+        else:
+            subprocess.check_call(['git', 'clone', self.repo_remote(repo_spec, stage=True), 'stage'], cwd=str(repo_dir))
 
-    @abc.abstractmethod
-    def deploy(self, repo_spec, branch='master', request_time=None):
-        raise NotImplementedError('Host {} does not support deploying'.format(self))
+    def deploy(self, repo_spec, branch=None):
+        repo = Repo(self, repo_spec)
+        cwd = repo.branch_path(branch=branch)
+        subprocess.check_call(['git', 'fetch', 'origin'], cwd=str(cwd))
+        #TODO respect main branch
+        #TODO don't reset gitignored files (or try merging and reset only if that fails)
+        subprocess.check_call(['git', 'reset', '--hard', 'origin/{}'.format(branch or 'master')], cwd=str(cwd))
 
     @property
     def dir(self):
         return gitdir.GITDIR / str(self)
+
+    def repo(self, repo_spec):
+        return Repo(self, repo_spec)
+
+    def repo_path(self, repo_spec):
+        return self.dir / repo_spec
+
+    @abc.abstractmethod
+    def repo_remote(self, repo_spec, stage=False):
+        raise NotImplementedError('Host {} does not support remotes')
 
     def update(self, quiet=False):
         for repo_dir in self:
