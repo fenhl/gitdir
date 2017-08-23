@@ -10,4 +10,4 @@ class Fenhl(gitdir.host.Host):
         return 'fenhl.net'
 
     def repo_remote(self, repo_spec, stage=False):
-        return 'fenhl@fenhl.net:/opt/git/localhost/{}/{}.git'.format(repo_spec)
+        return 'fenhl@fenhl.net:/opt/git/localhost/{}/{}.git'.format(repo_spec, repo_spec)

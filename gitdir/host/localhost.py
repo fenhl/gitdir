@@ -22,4 +22,4 @@ class LocalHost(gitdir.host.Host):
         return super().clone(repo_spec)
 
     def repo_remote(self, repo_spec, stage=False):
-        return '/opt/git/localhost/{}/{}.git'.format(repo_spec)
+        return '/opt/git/localhost/{}/{}.git'.format(repo_spec, repo_spec)
