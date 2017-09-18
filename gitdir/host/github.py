@@ -1,5 +1,3 @@
-import subprocess
-
 import gitdir.host
 
 class GitHub(gitdir.host.Host):

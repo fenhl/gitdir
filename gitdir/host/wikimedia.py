@@ -1,5 +1,3 @@
-import subprocess
-
 import gitdir.host
 
 class Wikimedia(gitdir.host.Host):
