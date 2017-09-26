@@ -60,13 +60,19 @@ class Host(abc.ABC):
 
     @property
     def dir(self):
-        return (gitdir.GITDIR / str(self)).resolve()
+        result = gitdir.GITDIR / str(self)
+        if result.exists():
+            result = result.resolve()
+        return result
 
     def repo(self, repo_spec):
         return Repo(self, repo_spec)
 
     def repo_path(self, repo_spec):
-        return (self.dir / repo_spec).resolve()
+        result = self.dir / repo_spec
+        if result.exists():
+            result = result.resolve()
+        return result
 
     @abc.abstractmethod
     def repo_remote(self, repo_spec, stage=False):
