@@ -1,6 +1,6 @@
 **gitdir** is a system that helps you keep your git repositories organized. It is *not* a git workflow, and works with different (but not all) workflows. Gitdir is the successor to [hubdir](https://github.com/fenhl/hubdir), generalized to allow working with repositories that are not hosted on github.
 
-This is gitdir version 2.0.1 ([semver](http://semver.org/)). The versioned API is described below, in the section *The system*.
+This is gitdir version 2.0.2 ([semver](http://semver.org/)). The versioned API is described below, in the section *The system*.
 
 # The system
 
@@ -19,7 +19,7 @@ The global gitdir will be used by default, while the user's local gitdir is used
 
 A gitdir contains subdirectories for any host from which repositories are cloned. The way repositories are organized within the host directory is defined individually for each host. For example, `github.com` organizes repositories by github username and repo name, so that the directory for this repo would be located at `/opt/git/github.com/fenhl/gitdir`.
 
-Three different kinds of repos may reside within a repo directory:
+Four different kinds of repos may reside within a repo directory:
 
 1.  Master repos, located at `<repodir>/master`. These track [the default branch](https://help.github.com/articles/setting-the-default-branch) from the remote and should always stay clean.
 2.  Branches, located at `<repodir>/branch/<branch>`. These work like the master repos, except they track a different remote branch.
