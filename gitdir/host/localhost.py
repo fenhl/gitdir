@@ -17,7 +17,7 @@ class LocalHost(gitdir.host.Host):
         repo_dir = self.repo_path(repo_spec)
         if not repo_dir.exists():
             raise ValueError('No such repo on localhost: {!r}'.format(repo_spec))
-        return super().clone(repo_spec)
+        return super().clone_stage(repo_spec)
 
     def repo_remote(self, repo_spec, stage=False):
         return '/opt/git/localhost/{}/{}.git'.format(repo_spec, repo_spec)
