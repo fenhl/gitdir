@@ -10,6 +10,12 @@ class Repo:
         self.host = host
         self.spec = repo_spec
 
+    def __repr__(self):
+        return 'gitdir.host.Repo({!r}, {!r})'.format(self.host, self.spec)
+
+    def __str__(self):
+        return '{}/{}'.format(self.host, self.spec)
+
     def branch_path(self, branch=None):
         if branch is None:
             return self.path / 'master'
@@ -26,6 +32,10 @@ class Repo:
 class Host(abc.ABC):
     @abc.abstractmethod
     def __iter__(self):
+        raise NotImplementedError()
+
+    @abc.abstractmethod
+    def __repr__(self):
         raise NotImplementedError()
 
     @abc.abstractmethod
@@ -79,19 +89,19 @@ class Host(abc.ABC):
         raise NotImplementedError('Host {} does not support remotes')
 
     def update(self, quiet=False):
-        for repo_dir in self:
+        for repo in self:
             try:
                 if quiet:
-                    out = subprocess.check_output(['git', 'pull', '--quiet'], cwd=str(repo_dir / 'master'))
+                    out = subprocess.check_output(['git', 'pull', '--quiet'], cwd=str(repo.branch_path())) #TODO (Python 3.6) remove str wrapper
                     if out != b'':
                         sys.stdout.buffer.write(out)
                         sys.stdout.buffer.flush()
-                        print('[ ** ] updated {}'.format(repo_dir))
+                        print('[ ** ] updated {}'.format(repo))
                 else:
-                    print('[ ** ] updating {}'.format(repo_dir))
-                    subprocess.check_call(['git', 'pull'], cwd=str(repo_dir / 'master'))
+                    print('[ ** ] updating {}'.format(repo))
+                    subprocess.check_call(['git', 'pull'], cwd=str(repo.branch_path())) #TODO (Python 3.6) remove str wrapper
             except subprocess.CalledProcessError:
-                print('[ !! ] failed to update {}'.format(repo_dir), file=sys.stderr)
+                print('[ !! ] failed to update {}'.format(repo), file=sys.stderr)
                 raise
 
 def all():
