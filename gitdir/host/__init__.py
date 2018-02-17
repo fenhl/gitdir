@@ -95,12 +95,26 @@ class Host(abc.ABC):
         return result
 
     def lookup(self, path):
+        def cmp_paths(left, right):
+            if left == right:
+                return True
+            if left.exists():
+                if left.resolve() == right:
+                    return True
+            if right.exists():
+                if left == right.resolve():
+                    return True
+            if left.exists() and right.exists():
+                if left.resolve() == right.resolve():
+                    return True
+            return False
+
         for repo in self:
-            if repo.path == path:
+            if cmp_paths(repo.path, path):
                 return repo, 'base'
-            elif repo.branch_path() == path:
+            elif cmp_paths(repo.branch_path(), path):
                 return repo, 'master'
-            elif repo.stage_path == path:
+            elif cmp_paths(repo.stage_path, path):
                 return repo, 'stage'
             #TODO support branches
         else:
