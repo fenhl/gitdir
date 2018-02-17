@@ -7,7 +7,7 @@ import subprocess
 import gitdir
 
 class Repo:
-    def __init__(self, host, spec):
+    def __init__(self, host, repo_spec):
         self.host = host
         self.spec = repo_spec
 
