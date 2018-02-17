@@ -1,14 +1,23 @@
 import sys
 
 import abc
+import contextlib
 import subprocess
 
 import gitdir
 
 class Repo:
-    def __init__(self, host, repo_spec):
+    def __init__(self, host, spec):
         self.host = host
         self.spec = repo_spec
+
+    @staticmethod
+    def lookup(path):
+        for host in all():
+            with contextlib.suppress(LookupError):
+                return host.lookup(path)
+        else:
+            raise LookupError('Path is not a repo dir')
 
     def __repr__(self):
         return 'gitdir.host.Repo({!r}, {!r})'.format(self.host, self.spec)
@@ -19,6 +28,7 @@ class Repo:
     def branch_path(self, branch=None):
         if branch is None:
             return self.path / 'master'
+        #TODO respect main branch
         return self.path / 'branch' / branch
 
     @property
@@ -74,6 +84,18 @@ class Host(abc.ABC):
         if result.exists():
             result = result.resolve()
         return result
+
+    def lookup(self, path):
+        for repo in self:
+            if repo.path == path:
+                return repo, 'base'
+            elif repo.branch_path() == path:
+                return repo, 'master'
+            elif repo.stage_path == path:
+                return repo, 'stage'
+            #TODO support branches
+        else:
+            raise LookupError('Path is not a repo dir in {}'.format(self))
 
     def repo(self, repo_spec):
         return Repo(self, repo_spec)
