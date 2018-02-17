@@ -31,6 +31,15 @@ class Repo:
         #TODO respect main branch
         return self.path / 'branch' / branch
 
+    def clone(self):
+        return self.host.clone(self.spec)
+
+    def clone_stage(self):
+        return self.host.clone_stage(self.spec)
+
+    def deploy(self, branch=None):
+        return self.host.deploy(self.spec, branch=branch)
+
     @property
     def path(self):
         return self.host.repo_path(self.spec)
