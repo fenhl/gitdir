@@ -83,9 +83,17 @@ class Host(abc.ABC):
         repo = Repo(self, repo_spec)
         cwd = repo.branch_path(branch=branch)
         subprocess.check_call(['git', 'fetch', 'origin'], cwd=str(cwd))
-        #TODO respect main branch
+        # respect main branch
+        if branch is None:
+            all_branches = subprocess.run(['git', 'branch', '-a'], stdout=subprocess.PIPE, stderr=subprocess.DEVNULL, check=True).stdout.decode('utf-8').splitlines()
+            for line in all_branches:
+                if line.startswith('  remotes/origin/HEAD -> origin/'):
+                    branch = line[len('  remotes/origin/HEAD -> origin/'):]
+                    break
+            else:
+                branch = 'master'
         #TODO don't reset gitignored files (or try merging and reset only if that fails)
-        subprocess.check_call(['git', 'reset', '--hard', 'origin/{}'.format(branch or 'master')], cwd=str(cwd))
+        subprocess.check_call(['git', 'reset', '--hard', 'origin/{}'.format(branch)], cwd=str(cwd))
 
     @property
     def dir(self):
