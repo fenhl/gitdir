@@ -85,7 +85,7 @@ class Host(abc.ABC):
         subprocess.check_call(['git', 'fetch', 'origin'], cwd=str(cwd))
         # respect main branch
         if branch is None:
-            all_branches = subprocess.run(['git', 'branch', '-a'], stdout=subprocess.PIPE, stderr=subprocess.DEVNULL, check=True).stdout.decode('utf-8').splitlines()
+            all_branches = subprocess.run(['git', 'branch', '-a'], stdout=subprocess.PIPE, stderr=subprocess.DEVNULL, check=True, cwd=str(cwd)).stdout.decode('utf-8').splitlines()
             for line in all_branches:
                 if line.startswith('  remotes/origin/HEAD -> origin/'):
                     branch = line[len('  remotes/origin/HEAD -> origin/'):]
