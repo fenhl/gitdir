@@ -166,6 +166,9 @@ def by_name(hostname):
     if hostname == 'github.com':
         import gitdir.host.github
         return gitdir.host.github.GitHub()
+    elif hostname == 'gitlab.com':
+        import gitdir.host.gitlab
+        return gitdir.host.gitlab.GitLab()
     elif hostname == 'localhost':
         import gitdir.host.localhost
         return gitdir.host.localhost.LocalHost()
