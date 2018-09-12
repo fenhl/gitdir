@@ -72,8 +72,7 @@ class Host(abc.ABC):
 
     def clone_stage(self, repo_spec):
         repo_dir = self.repo_path(repo_spec)
-        if not repo_dir.exists():
-            repo_dir.mkdir(parents=True)
+        repo_dir.clone()
         if (repo_dir / 'stage').exists():
             raise NotImplementedError('Stage already exists')
         else:
