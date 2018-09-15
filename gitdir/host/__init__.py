@@ -71,8 +71,8 @@ class Host(abc.ABC):
             subprocess.check_call(['git', 'clone', self.repo_remote(repo_spec), 'master'], cwd=str(repo_dir))
 
     def clone_stage(self, repo_spec):
+        self.clone(repo_spec)
         repo_dir = self.repo_path(repo_spec)
-        repo_dir.clone()
         if (repo_dir / 'stage').exists():
             raise NotImplementedError('Stage already exists')
         else:
