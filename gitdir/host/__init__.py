@@ -31,8 +31,8 @@ class Repo:
         #TODO respect main branch
         return self.path / 'branch' / branch
 
-    def clone(self):
-        return self.host.clone(self.spec)
+    def clone(self, *, branch=None):
+        return self.host.clone(self.spec, branch=branch)
 
     def clone_stage(self):
         return self.host.clone_stage(self.spec)
@@ -61,14 +61,14 @@ class Host(abc.ABC):
     def __str__(self):
         raise NotImplementedError()
 
-    def clone(self, repo_spec):
-        repo_dir = self.repo_path(repo_spec)
-        if not repo_dir.exists():
-            repo_dir.mkdir(parents=True)
-        if (repo_dir / 'master').exists():
-            self.deploy(repo_spec)
+    def clone(self, repo_spec, *, branch=None):
+        repo = Repo(self, repo_spec)
+        branch_dir = repo.branch_path(branch)
+        if branch_dir.exists():
+            self.deploy(repo_spec, branch=branch)
         else:
-            subprocess.check_call(['git', 'clone', self.repo_remote(repo_spec), 'master'], cwd=str(repo_dir))
+            branch_dir.parent.mkdir(parents=True, exist_ok=True)
+            subprocess.check_call(['git', 'clone'] + ([] if branch is None else ['--branch={}'.format(branch)]) + [self.repo_remote(repo_spec), branch_dir.name], cwd=str(branch_dir.parent))
 
     def clone_stage(self, repo_spec):
         self.clone(repo_spec)
