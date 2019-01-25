@@ -92,10 +92,11 @@ class Host(abc.ABC):
             else:
                 branch = 'master'
         #TODO don't reset gitignored files (or try merging and reset only if that fails)
-        try:
-            subprocess.check_call(['git', 'reset', '--hard', 'origin/{}'.format(branch)], cwd=str(cwd))
-        except subprocess.CalledProcessError:
-            subprocess.check_call(['git', 'pull'], cwd=str(cwd))
+        if subprocess.run(['git', 'rev-parse', '--abbrev-ref', 'HEAD'], stdout=subprocess.PIPE, check=True, cwd=str(cwd)).stdout.decode('utf-8').strip() != 'HEAD': # don't reploy if in “detached HEAD” state (tag repos)
+            try:
+                subprocess.check_call(['git', 'reset', '--hard', 'origin/{}'.format(branch)], cwd=str(cwd))
+            except subprocess.CalledProcessError:
+                subprocess.check_call(['git', 'pull'], cwd=str(cwd))
 
     @property
     def dir(self):
