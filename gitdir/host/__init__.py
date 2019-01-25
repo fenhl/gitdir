@@ -92,7 +92,10 @@ class Host(abc.ABC):
             else:
                 branch = 'master'
         #TODO don't reset gitignored files (or try merging and reset only if that fails)
-        subprocess.check_call(['git', 'reset', '--hard', 'origin/{}'.format(branch)], cwd=str(cwd))
+        try:
+            subprocess.check_call(['git', 'reset', '--hard', 'origin/{}'.format(branch)], cwd=str(cwd))
+        except subprocess.CalledProcessError:
+            subprocess.check_call(['git', 'pull'], cwd=str(cwd))
 
     @property
     def dir(self):
