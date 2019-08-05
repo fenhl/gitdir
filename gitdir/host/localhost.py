@@ -12,11 +12,11 @@ class LocalHost(gitdir.host.Host):
     def __str__(self):
         return 'localhost'
 
-    def clone(self, repo_spec):
+    def clone(self, repo_spec, *, branch=None):
         repo_dir = self.repo_path(repo_spec)
         if not repo_dir.exists():
             raise ValueError('No such repo on localhost: {!r}'.format(repo_spec))
-        return super().clone(repo_spec)
+        return super().clone(repo_spec, branch=branch)
 
     def clone_stage(self, repo_spec):
         repo_dir = self.repo_path(repo_spec)
