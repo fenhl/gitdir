@@ -68,7 +68,7 @@ class Host(abc.ABC):
             self.deploy(repo_spec, branch=branch)
         else:
             branch_dir.parent.mkdir(parents=True, exist_ok=True)
-            subprocess.check_call(['git', 'clone'] + ([] if branch is None else ['--branch={}'.format(branch)]) + [self.repo_remote(repo_spec), branch_dir.name], cwd=str(branch_dir.parent))
+            subprocess.check_call(['git', 'clone', '--recurse-submodules'] + ([] if branch is None else ['--branch={}'.format(branch)]) + [self.repo_remote(repo_spec), branch_dir.name], cwd=str(branch_dir.parent))
 
     def clone_stage(self, repo_spec):
         self.clone(repo_spec)
@@ -76,7 +76,7 @@ class Host(abc.ABC):
         if (repo_dir / 'stage').exists():
             raise NotImplementedError('Stage already exists')
         else:
-            subprocess.check_call(['git', 'clone', self.repo_remote(repo_spec, stage=True), 'stage'], cwd=str(repo_dir))
+            subprocess.check_call(['git', 'clone', '--recurse-submodules', self.repo_remote(repo_spec, stage=True), 'stage'], cwd=str(repo_dir))
 
     def deploy(self, repo_spec, branch=None):
         repo = Repo(self, repo_spec)
