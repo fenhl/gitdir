@@ -1,3 +1,5 @@
+import github # PyPI: PyGithub
+
 import gitdir.host
 
 class GitHub(gitdir.host.Host):
@@ -6,7 +8,7 @@ class GitHub(gitdir.host.Host):
             if user_dir.is_dir():
                 for repo_dir in sorted(user_dir.iterdir()):
                     if repo_dir.is_dir():
-                        yield self.repo('{}/{}'.format(user_dir.name, repo_dir.name))
+                        yield self.repo(f'{user_dir.name}/{repo_dir.name}')
 
     def __repr__(self):
         return 'gitdir.host.github.GitHub()'
@@ -17,6 +19,11 @@ class GitHub(gitdir.host.Host):
     def repo_remote(self, repo_spec, stage=False):
         user, repo_name = repo_spec.split('/')
         if stage:
-            return 'git@github.com:{}/{}.git'.format(user, repo_name)
+            return f'git@github.com:{user}/{repo_name}.git'
         else:
-            return 'https://github.com/{}/{}.git'.format(user, repo_name)
+            try:
+                github.Github().get_user(user).get_repo(repo_name)
+            except github.GithubException:
+                return f'git@github.com:{user}/{repo_name}.git'
+            else:
+                return f'https://github.com/{user}/{repo_name}.git'

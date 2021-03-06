@@ -19,4 +19,4 @@ class Wikimedia(gitdir.host.Host):
         if stage:
             raise NotImplementedError('Stages not implemented for Wikimedia host')
         else:
-            return 'https://gerrit.wikimedia.org/r/p/mediawiki/extensions/{}.git'.format(repo_spec)
+            return f'https://gerrit.wikimedia.org/r/p/mediawiki/extensions/{repo_spec}.git'

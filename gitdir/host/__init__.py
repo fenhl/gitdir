@@ -20,10 +20,10 @@ class Repo:
             raise LookupError('Path is not a repo dir')
 
     def __repr__(self):
-        return 'gitdir.host.Repo({!r}, {!r})'.format(self.host, self.spec)
+        return f'gitdir.host.Repo({self.host!r}, {self.spef!r})'
 
     def __str__(self):
-        return '{}/{}'.format(self.host, self.spec)
+        return f'{self.host}/{self.spec}'
 
     def branch_path(self, branch=None):
         if branch is None:
@@ -68,7 +68,7 @@ class Host(abc.ABC):
             self.deploy(repo_spec, branch=branch)
         else:
             branch_dir.parent.mkdir(parents=True, exist_ok=True)
-            subprocess.check_call(['git', 'clone', '--recurse-submodules'] + ([] if branch is None else ['--branch={}'.format(branch)]) + [self.repo_remote(repo_spec), branch_dir.name], cwd=str(branch_dir.parent))
+            subprocess.check_call(['git', 'clone', '--recurse-submodules'] + ([] if branch is None else [f'--branch={branch}']) + [self.repo_remote(repo_spec), branch_dir.name], cwd=str(branch_dir.parent))
 
     def clone_stage(self, repo_spec):
         self.clone(repo_spec)
@@ -94,7 +94,7 @@ class Host(abc.ABC):
         #TODO don't reset gitignored files (or try merging and reset only if that fails)
         if subprocess.run(['git', 'rev-parse', '--abbrev-ref', 'HEAD'], stdout=subprocess.PIPE, check=True, cwd=str(cwd)).stdout.decode('utf-8').strip() != 'HEAD': # don't reploy if in “detached HEAD” state (tag repos)
             try:
-                subprocess.check_call(['git', 'reset', '--hard', 'origin/{}'.format(branch)], cwd=str(cwd))
+                subprocess.check_call(['git', 'reset', '--hard', f'origin/{branch}'], cwd=str(cwd))
             except subprocess.CalledProcessError:
                 subprocess.check_call(['git', 'pull'], cwd=str(cwd))
 
@@ -129,7 +129,7 @@ class Host(abc.ABC):
                 return repo, 'stage'
             #TODO support branches
         else:
-            raise LookupError('Path is not a repo dir in {}'.format(self))
+            raise LookupError(f'Path is not a repo dir in {self}')
 
     def repo(self, repo_spec):
         return Repo(self, repo_spec)
@@ -152,12 +152,12 @@ class Host(abc.ABC):
                     if out != b'':
                         sys.stdout.buffer.write(out)
                         sys.stdout.buffer.flush()
-                        print('[ ** ] updated {}'.format(repo))
+                        print(f'[ ** ] updated {repo}')
                 else:
-                    print('[ ** ] updating {}'.format(repo))
+                    print(f'[ ** ] updating {repo}')
                     subprocess.check_call(['git', 'pull'], cwd=str(repo.branch_path())) #TODO (Python 3.6) remove str wrapper
             except subprocess.CalledProcessError:
-                print('[ !! ] failed to update {}'.format(repo), file=sys.stderr)
+                print(f'[ !! ] failed to update {repo}', file=sys.stderr)
                 raise
 
 def all():
@@ -182,4 +182,4 @@ def by_name(hostname):
         import gitdir.host.wikimedia
         return gitdir.host.wikimedia.Wikimedia()
     else:
-        raise ValueError('Unsupported hostname: {}'.format(hostname))
+        raise ValueError(f'Unsupported hostname: {hostname}')

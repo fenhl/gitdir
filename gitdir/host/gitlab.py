@@ -6,7 +6,7 @@ class GitLab(gitdir.host.Host):
             if user_dir.is_dir():
                 for repo_dir in sorted(user_dir.iterdir()):
                     if repo_dir.is_dir():
-                        yield self.repo('{}/{}'.format(user_dir.name, repo_dir.name))
+                        yield self.repo(f'{user_dir.name}/{repo_dir.name}')
 
     def __repr__(self):
         return 'gitdir.host.gitlab.GitLab()'
@@ -17,6 +17,6 @@ class GitLab(gitdir.host.Host):
     def repo_remote(self, repo_spec, stage=False):
         user, repo_name = repo_spec.split('/')
         if stage:
-            return 'git@gitlab.com:{}/{}.git'.format(user, repo_name)
+            return f'git@gitlab.com:{user}/{repo_name}.git'
         else:
-            return 'https://gitlab.com/{}/{}.git'.format(user, repo_name)
+            return f'https://gitlab.com/{user}/{repo_name}.git'
