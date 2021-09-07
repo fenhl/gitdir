@@ -34,10 +34,11 @@ class LocalHost(gitdir.host.Host):
             raise ValueError(f'No such repo on localhost: {repo_spec!r}')
         return super().clone_stage(repo_spec)
 
-    def deploy(self, repo_spec, branch=None):
+    def deploy(self, repo_spec, branch=None, *, quiet=False):
+        quiet_arg = ['--quiet'] if quiet else []
         #TODO also support non-worktree checkouts left over from older versions
         cwd = gitdir.host.Repo(self, repo_spec).branch_path(branch=branch)
-        subprocess.run(['git', 'reset', '--hard'], cwd=cwd, check=True)
+        subprocess.run(['git', 'reset', *quiet_arg, '--hard'], cwd=cwd, check=True)
         #TODO also run deploy hooks once implemented
 
     def repo_remote(self, repo_spec, stage=False):

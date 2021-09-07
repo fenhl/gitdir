@@ -36,8 +36,8 @@ class Repo:
     def clone_stage(self):
         return self.host.clone_stage(self.spec)
 
-    def deploy(self, branch=None):
-        return self.host.deploy(self.spec, branch=branch)
+    def deploy(self, branch=None, *, quiet=False):
+        return self.host.deploy(self.spec, branch=branch, quiet=quiet)
 
     @property
     def path(self):
@@ -75,15 +75,16 @@ class Host(abc.ABC):
         if (repo_dir / 'stage').exists():
             raise NotImplementedError('Stage already exists')
         else:
-            subprocess.check_call(['git', 'clone', '--recurse-submodules', self.repo_remote(repo_spec, stage=True), 'stage'], cwd=str(repo_dir))
+            subprocess.check_call(['git', 'clone', '--recurse-submodules', self.repo_remote(repo_spec, stage=True), 'stage'], cwd=repo_dir)
 
-    def deploy(self, repo_spec, branch=None):
+    def deploy(self, repo_spec, branch=None, *, quiet=False):
+        quiet_arg = ['--quiet'] if quiet else []
         repo = Repo(self, repo_spec)
         cwd = repo.branch_path(branch=branch)
-        subprocess.check_call(['git', 'fetch', 'origin'], cwd=str(cwd))
+        subprocess.check_call(['git', 'fetch', *quiet_arg, 'origin'], cwd=cwd)
         # respect main branch
         if branch is None:
-            all_branches = subprocess.run(['git', 'branch', '-a'], stdout=subprocess.PIPE, stderr=subprocess.DEVNULL, check=True, cwd=str(cwd)).stdout.decode('utf-8').splitlines()
+            all_branches = subprocess.run(['git', 'branch', '-a'], stdout=subprocess.PIPE, stderr=subprocess.DEVNULL, check=True, cwd=cwd).stdout.decode('utf-8').splitlines()
             for line in all_branches:
                 if line.startswith('  remotes/origin/HEAD -> origin/'):
                     branch = line[len('  remotes/origin/HEAD -> origin/'):]
@@ -91,11 +92,11 @@ class Host(abc.ABC):
             else:
                 branch = 'master'
         #TODO don't reset gitignored files (or try merging and reset only if that fails)
-        if subprocess.run(['git', 'rev-parse', '--abbrev-ref', 'HEAD'], stdout=subprocess.PIPE, check=True, cwd=str(cwd)).stdout.decode('utf-8').strip() != 'HEAD': # don't reploy if in “detached HEAD” state (tag repos)
+        if subprocess.run(['git', 'rev-parse', '--abbrev-ref', 'HEAD'], stdout=subprocess.PIPE, check=True, cwd=cwd).stdout.decode('utf-8').strip() != 'HEAD': # don't reploy if in “detached HEAD” state (tag repos)
             try:
-                subprocess.check_call(['git', 'reset', '--hard', f'origin/{branch}'], cwd=str(cwd))
+                subprocess.check_call(['git', 'reset', *quiet_arg, '--hard', f'origin/{branch}'], cwd=cwd)
             except subprocess.CalledProcessError:
-                subprocess.check_call(['git', 'pull'], cwd=str(cwd))
+                subprocess.check_call(['git', 'pull', *quiet_arg], cwd=cwd)
 
     @property
     def dir(self):
@@ -146,15 +147,9 @@ class Host(abc.ABC):
     def update(self, quiet=False):
         for repo in self:
             try:
-                if quiet:
-                    out = subprocess.check_output(['git', 'pull', '--quiet'], cwd=str(repo.branch_path())) #TODO (Python 3.6) remove str wrapper
-                    if out != b'':
-                        sys.stdout.buffer.write(out)
-                        sys.stdout.buffer.flush()
-                        print(f'[ ** ] updated {repo}')
-                else:
+                if not quiet:
                     print(f'[ ** ] updating {repo}')
-                    subprocess.check_call(['git', 'pull'], cwd=str(repo.branch_path())) #TODO (Python 3.6) remove str wrapper
+                repo.deploy(quiet=quiet)
             except subprocess.CalledProcessError:
                 print(f'[ !! ] failed to update {repo}', file=sys.stderr)
                 raise
