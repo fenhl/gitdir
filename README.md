@@ -1,6 +1,6 @@
 **gitdir** is a system that helps you keep your git repositories organized. It is *not* a git workflow, and works with different (but not all) workflows. Gitdir is the successor to [hubdir](https://github.com/fenhl/hubdir), generalized to allow working with repositories that are not hosted on github.
 
-This is gitdir version 2.0.4 ([semver](http://semver.org/)). The versioned API is described below, in the section *The system*.
+This is gitdir version 2.0.5 ([semver](http://semver.org/)). The versioned API is described below, in the section *The system*.
 
 # The system
 

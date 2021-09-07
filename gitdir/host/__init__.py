@@ -27,8 +27,7 @@ class Repo:
 
     def branch_path(self, branch=None):
         if branch is None:
-            return self.path / 'master'
-        #TODO respect main branch
+            return self.path / 'master' #TODO use main instead
         return self.path / 'branch' / branch
 
     def clone(self, *, branch=None):
