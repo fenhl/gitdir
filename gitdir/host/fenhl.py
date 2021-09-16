@@ -1,6 +1,15 @@
+import socket
+
 import gitdir.host
+import gitdir.host.localhost
 
 class Fenhl(gitdir.host.Host):
+    def __new__(cls):
+        if socket.getfqdn() == 'mercredi.fenhl.net':
+            return gitdir.host.localhost.LocalHost()
+        else:
+            return super().__new__(cls)
+
     def __iter__(self):
         for repo_dir in sorted(self.dir.iterdir()):
             if repo_dir.is_dir():
