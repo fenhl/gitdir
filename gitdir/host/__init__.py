@@ -32,9 +32,10 @@ class Repo:
 
     @property
     def branches(self):
-        for branch_path in (self.path / 'branch').iterdir():
-            if branch_path.is_dir():
-                yield branch_path.name
+        if (self.path / 'branch').exists():
+            for branch_path in (self.path / 'branch').iterdir():
+                if branch_path.is_dir():
+                    yield branch_path.name
 
     def clone(self, *, branch=None):
         return self.host.clone(self.spec, branch=branch)
