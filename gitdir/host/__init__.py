@@ -30,6 +30,12 @@ class Repo:
             return self.path / 'master' #TODO use main instead
         return self.path / 'branch' / branch
 
+    @property
+    def branches(self):
+        for branch_path in (self.path / 'branch').iterdir():
+            if branch_path.is_dir():
+                yield branch_path.name
+
     def clone(self, *, branch=None):
         return self.host.clone(self.spec, branch=branch)
 
@@ -38,6 +44,11 @@ class Repo:
 
     def deploy(self, branch=None, *, quiet=False):
         return self.host.deploy(self.spec, branch=branch, quiet=quiet)
+
+    def deploy_all(self, *, quiet=False):
+        self.deploy(quiet=quiet)
+        for branch in self.branches:
+            self.deploy(branch, quiet=quiet)
 
     @property
     def path(self):
@@ -149,7 +160,7 @@ class Host(abc.ABC):
             try:
                 if not quiet:
                     print(f'[ ** ] updating {repo}')
-                repo.deploy(quiet=quiet)
+                repo.deploy_all(quiet=quiet)
             except subprocess.CalledProcessError:
                 print(f'[ !! ] failed to update {repo}', file=sys.stderr)
                 raise
