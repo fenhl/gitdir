@@ -20,7 +20,7 @@ class Repo:
             raise LookupError('Path is not a repo dir')
 
     def __repr__(self):
-        return f'gitdir.host.Repo({self.host!r}, {self.spef!r})'
+        return f'gitdir.host.Repo({self.host!r}, {self.spec!r})'
 
     def __str__(self):
         return f'{self.host}/{self.spec}'
