@@ -31,7 +31,7 @@ import gitdir.host
 def parse_version_string():
     path = pathlib.Path(__file__).resolve().parent.parent # go up one level, from repo/gitdir/__main__.py to repo, where README.md is located
     version = subprocess.check_output(['git', 'rev-parse', '--abbrev-ref', 'HEAD'], cwd=str(path)).decode('utf-8').strip('\n')
-    if version == 'master':
+    if version in ('main', 'master'):
         with (path / 'README.md').open() as readme:
             for line in readme.read().splitlines():
                 if line.startswith('This is gitdir version '):

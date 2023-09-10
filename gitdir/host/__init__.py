@@ -27,7 +27,12 @@ class Repo:
 
     def branch_path(self, branch=None):
         if branch is None:
-            return self.path / 'master' #TODO use main instead
+            main_path = self.path / 'main'
+            master_path = self.path / 'master'
+            if master_path.exists() and not main_path.exists():
+                return master_path
+            else:
+                return main_path
         return self.path / 'branch' / branch
 
     @property
@@ -102,7 +107,7 @@ class Host(abc.ABC):
                     branch = line[len('  remotes/origin/HEAD -> origin/'):]
                     break
             else:
-                branch = 'master'
+                branch = 'main'
         #TODO don't reset gitignored files (or try merging and reset only if that fails)
         if subprocess.run(['git', 'rev-parse', '--abbrev-ref', 'HEAD'], stdout=subprocess.PIPE, check=True, cwd=cwd).stdout.decode('utf-8').strip() != 'HEAD': # don't reploy if in “detached HEAD” state (tag repos)
             try:
@@ -136,7 +141,7 @@ class Host(abc.ABC):
             if cmp_paths(repo.path, path):
                 return repo, 'base'
             elif cmp_paths(repo.branch_path(), path):
-                return repo, 'master'
+                return repo, 'master' #TODO rename to main (use an enum?)
             elif cmp_paths(repo.stage_path, path):
                 return repo, 'stage'
             #TODO support branches

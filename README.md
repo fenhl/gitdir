@@ -1,6 +1,6 @@
 **gitdir** is a system that helps you keep your git repositories organized. It is *not* a git workflow, and works with different (but not all) workflows. Gitdir is the successor to [hubdir](https://github.com/fenhl/hubdir), generalized to allow working with repositories that are not hosted on github.
 
-This is gitdir version 2.0.6 ([semver](http://semver.org/)). The versioned API is described below, in the section *The system*.
+This is gitdir version 3.0.0 ([semver](http://semver.org/)). The versioned API is described below, in the section *The system*.
 
 # The system
 
@@ -21,8 +21,8 @@ A gitdir contains subdirectories for any host from which repositories are cloned
 
 Four different kinds of repos may reside within a repo directory:
 
-1.  Master repos, located at `<repodir>/master`. These track [the default branch](https://help.github.com/articles/setting-the-default-branch) from the remote and should always stay clean.
-2.  Branches, located at `<repodir>/branch/<branch>`. These work like the master repos, except they track a different remote branch.
+1.  Main repos, located at `<repodir>/main` (fallback to `<repodir>/master` for backwards compatibility). These track [the default branch](https://help.github.com/articles/setting-the-default-branch) from the remote and should always stay clean.
+2.  Branches, located at `<repodir>/branch/<branch>`. These work like the main repos, except they track a different remote branch.
 3.  Stages, located at `<repodir>/stage`. These have more loose restrictions and are where any work happens.
 4.  Bare repos, located at `<repodir>/<reponame>.git`. These are created with `git init --bare`, and should be used as the remote when hosting locally (`/opt/git/localhost`).
 
@@ -31,7 +31,7 @@ Four different kinds of repos may reside within a repo directory:
 Within a repo, the following rules should be, well, followed:
 
 *   All github repos have the default `origin` remote set up as follows:
-    *   For master and branch repos, `https://github.com/<user>/<reponame>.git`
+    *   For main and branch repos, `https://github.com/<user>/<reponame>.git`
     *   For stage repos, `git@github.com:<user>/<reponame>.git`
-*   Master and branch repos have no other remotes. For stages, do whatever works best for your git workflow.
+*   Main and branch repos have no other remotes. For stages, do whatever works best for your git workflow.
 *   In multi-user environments, the global gitdir and everything under it should be owned by a group named `git` and be group read-writeable.

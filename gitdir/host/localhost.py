@@ -18,15 +18,23 @@ class LocalHost(gitdir.host.Host):
         if not repo_dir.exists():
             raise ValueError(f'No such repo on localhost: {repo_spec!r}')
         if branch is None:
-            branch_dir = repo_dir / 'master' #TODO use 'main' instead
+            main_dir = repo_dir / 'main'
+            if main_dir.exists():
+                self.deploy(repo_spec)
+                return
+            master_dir = repo_dir / 'master'
+            if master_dir.exists():
+                self.deploy(repo_spec)
+                return
+            branch_dir = main_dir
         else:
             branch_dir = repo_dir / 'branch' / branch
-        if branch_dir.exists():
-            self.deploy(repo_spec, branch=branch)
-        else:
-            if branch is None:
-                branch = subprocess.run(['git', 'symbolic-ref', 'HEAD'], cwd=repo_dir / f'{repo_spec}.git', stdout=subprocess.PIPE, encoding='utf-8', check=True).stdout.strip().split('/')[-1]
-            subprocess.run(['git', 'worktree', 'add', str(branch_dir), branch], cwd=repo_dir / f'{repo_spec}.git', check=True)
+            if branch_dir.exists():
+                self.deploy(repo_spec, branch=branch)
+                return
+        if branch is None:
+            branch = subprocess.run(['git', 'symbolic-ref', 'HEAD'], cwd=repo_dir / f'{repo_spec}.git', stdout=subprocess.PIPE, encoding='utf-8', check=True).stdout.strip().split('/')[-1]
+        subprocess.run(['git', 'worktree', 'add', str(branch_dir), branch], cwd=repo_dir / f'{repo_spec}.git', check=True)
 
     def clone_stage(self, repo_spec):
         repo_dir = self.repo_path(repo_spec)
